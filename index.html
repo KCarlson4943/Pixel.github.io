@@ -1,329 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Productivity Hub</title>
-    <style>
-        :root {
-            --bg-body: #f4f7f6;
-            --bg-container: #ffffff;
-            --text-main: #333333;
-            --text-muted: #777777;
-            --border-color: #dddddd;
-            --item-bg: #f9f9f9;
-            --primary: #2ecc71;
-            --primary-hover: #27ae60;
-            --danger: #e74c3c;
-            --danger-hover: #c0392b;
-            --shadow: rgba(0, 0, 0, 0.1);
-            
-            /* Priority Indicators */
-            --priority-high: #e74c3c;
-            --priority-medium: #f39c12;
-            --priority-low: #3498db;
-        }
-        [data-theme="dark"] {
-            --bg-body: #121212;
-            --bg-container: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --border-color: #333333;
-            --item-bg: #2a2a2a;
-            --shadow: rgba(0, 0, 0, 0.5);
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .todo-container {
-            background: var(--bg-container);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px var(--shadow);
-            width: 100%;
-            max-width: 550px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .theme-toggle-btn {
-            background: none;
-            border: 2px solid var(--border-color);
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .theme-toggle-btn:hover {
-            background: var(--border-color);
-        }
-        /* Dashboard Metrics Grid */
-        .metrics-bar {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .metric-card {
-            background: var(--item-bg);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .metric-num {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        .metric-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-        /* Unified Form Styling */
-        .input-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-            background: var(--item-bg);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .form-row-main {
-            display: flex;
-            gap: 10px;
-        }
-        .form-row-meta {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        input[type="text"], select, input[type="date"] {
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
-            outline: none;
-            background: var(--bg-container);
-            color: var(--text-main);
-            transition: border-color 0.2s;
-        }
-        input[type="text"] {
-            flex: 1;
-        }
-        select, input[type="date"] {
-            flex: 1;
-            min-width: 120px;
-        }
-        input[type="text"]:focus, select:focus, input[type="date"]:focus {
-            border-color: var(--primary);
-        }
-        button.add-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button.add-btn:hover {
-            background-color: var(--primary-hover);
-        }
-        /* Control & Filter Strip */
-        .controls-strip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-        .search-box {
-            flex: 1;
-            max-width: 200px;
-        }
-        .filter-tabs {
-            display: flex;
-            gap: 5px;
-        }
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 6px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        /* List Framework */
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        li {
-            background: var(--item-bg);
-            padding: 14px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 5px solid var(--border-color);
-            border-top: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            animation: fadeIn 0.25s ease-out;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        li.priority-High { border-left-color: var(--priority-high); }
-        li.priority-Medium { border-left-color: var(--priority-medium); }
-        li.priority-Low { border-left-color: var(--priority-low); }
-        li.completed {
-            opacity: 0.6;
-        }
-        li.completed .task-text {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .task-left-block {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            min-width: 0; /* Prevents overflow */
-        }
-        .task-checkbox {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        .task-details {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            min-width: 0;
-        }
-        .task-text {
-            font-size: 15px;
-            font-weight: 500;
-            word-wrap: break-word;
-        }
-        .task-meta-tags {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .tag {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-            background: var(--border-color);
-            color: var(--text-main);
-        }
-        .tag.tag-date {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-        }
-        .task-actions {
-            display: flex;
-            gap: 8px;
-        }
-        button.remove-btn {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: background 0.2s;
-        }
-        button.remove-btn:hover {
-            background-color: var(--danger-hover);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-style: italic;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel Box</title>
+  <style>
+    :root {
+      --bg: #f8e729;
+      --ink: #111111;
+      --panel: #ffffff;
+      --soft: #f3f3f3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      display: grid;
+      place-items: center;
+      gap: 16px;
+      padding: 48px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .note {
+      margin: 0;
+      text-align: center;
+      max-width: 520px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(16, 22px);
+      grid-template-rows: repeat(16, 22px);
+      border: 2px solid var(--ink);
+      background: var(--panel);
+      line-height: 0;
+    }
+
+    .pixel {
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border: 1px solid #000;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .pixel:hover {
+      background: var(--soft);
+    }
+
+    .pixel.active {
+      background: #111111;
+    }
+
+    .action-button {
+      background: #111111;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .color-picker {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .color-button {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #000;
+      cursor: pointer;
+      padding: 0;
+      background: #000;
+    }
+
+    .color-button.active {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+    }
+
+    .color-button.red { background: #ff4d4d; }
+    .color-button.blue { background: #2d6cdf; }
+    .color-button.green { background: #34b26a; }
+
+    #spawn-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .spawn-box {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #000;
+      background: #111;
+    }
+  </style>
 </head>
 <body>
-    <div class="todo-container">
-        <!-- Header -->
-        <div class="header-section">
-            <h2>Productivity Hub</h2>
-            <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">Dark Mode</button>
-        </div>
-        <!-- Dashboard Metrics Banner -->
-        <div class="metrics-bar">
-            <div class="metric-card">
-                <div class="metric-num" id="metric-total">0</div>
-                <div class="metric-label">Created</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-num" id="metric-done">0</div>
-                <div class="metric-label">Completed</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-num" id="metric-ratio">0%</div>
-                <div class="metric-label">Efficiency</div>
-            </div>
-        </div>
-        
-        <!-- Upgraded Input Engine -->
-        <div class="input-form">
-            <div class="form-row-main">
-                <input type="text" id="todo-input" placeholder="What requires focus next?...">
-                <button class="add-btn" onclick="addTask()">Commit</button>
-0 commit comments
-Comments
-0
- (0)
-Comment
-You're not receiving notifications from this thread.
+  <main class="page">
+    <p class="note">
+      If your drawing is good enough, it will be kept. If not, try again. Always think outside the box.
+    </p>
 
+    <div class="pixel-grid" id="grid" aria-label="Pixel art grid"></div>
+
+    <button class="action-button" type="button">Submit</button>
+
+    <div class="color-picker" aria-label="Choose box color">
+      <button class="color-button red active" type="button" data-color="#ff4d4d" aria-label="Red"></button>
+      <button class="color-button blue" type="button" data-color="#2d6cdf" aria-label="Blue"></button>
+      <button class="color-button green" type="button" data-color="#34b26a" aria-label="Green"></button>
+    </div>
+  </main>
+
+  <div id="spawn-layer" aria-hidden="true"></div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const submitButton = document.querySelector('.action-button');
+    const spawnLayer = document.getElementById('spawn-layer');
+    const colorButtons = document.querySelectorAll('.color-button');
+    const totalCells = 16 * 16;
+    const acceptedImageUrl = 'https://www.wagonwheelinc.com/wp-content/uploads/2023/08/Elm-Undneath.jpg';
+    const paragraph = "You thought out side the box!";
+
+    let keepDrawing = false;
+    let activeColor = '#ff4d4d';
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'pixel';
+      cell.setAttribute('title', 'Click to fill');
+
+      cell.addEventListener('click', () => {
+        const isActive = cell.classList.toggle('active');
+        cell.style.background = isActive ? activeColor : '#fff';
+      });
+
+      grid.appendChild(cell);
+    }
+
+    function clearPixels() {
+      document.querySelectorAll('.pixel.active').forEach((cell) => {
+        cell.classList.remove('active');
+        cell.style.background = '#fff';
+      });
+    }
+
+    submitButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+
+      if (Math.random() < 1 / 8) {
+        keepDrawing = true;
+        submitButton.textContent = 'Picture kept';
+        document.body.style.backgroundImage = `url("${acceptedImageUrl}")`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        document.body.style.backgroundAttachment = 'fixed';
+        return;
+      }
+
+      keepDrawing = false;
+      clearPixels();
+      submitButton.textContent = 'Submit';
+      document.body.style.backgroundImage = 'none';
+    });
+
+    colorButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeColor = button.dataset.color;
+        colorButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!keepDrawing || event.target.closest('.action-button') || event.target.closest('.color-button')) {
+        return;
+      }
+
+      const box = document.createElement('div');
+      box.className = 'spawn-box';
+      box.style.left = `${event.clientX - 10}px`;
+      box.style.top = `${event.clientY - 10}px`;
+      box.style.background = activeColor;
+      spawnLayer.appendChild(box);
+    });
+  </script>
+</body>
+</html>
